@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Prototype - ผงนัวพืชตกเกรดธรรมชาติ 100%</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Three.js & OrbitControls -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <style>
+        body { font-family: 'Prompt', sans-serif; background-color: #0b0f19; color: #f3f4f6; overflow-x: hidden; }
+        #canvas-container { width: 100%; height: 100vh; position: absolute; top: 0; left: 0; z-index: 1; }
+        .ui-layer { position: relative; z-index: 10; pointer-events: none; }
+        .interactive { pointer-events: auto; }
+        .glass-panel {
+            background: rgba(17, 24, 39, 0.85);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #f59e0b; border-radius: 4px; }
+    </style>
+</head>
+<body class="relative min-h-screen">
+
+    <!-- 3D Canvas Container -->
+    <div id="canvas-container"></div>
+
+    <!-- UI Overlay Layer -->
+    <div class="ui-layer min-h-screen flex flex-col justify-between p-3 md:p-5">
+        
+        <!-- Header -->
+        <header class="flex justify-between items-center glass-panel p-3 md:p-4 rounded-2xl interactive shadow-2xl">
+            <div class="flex items-center space-x-3">
+                <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-amber-500 via-yellow-400 to-emerald-500 flex items-center justify-center text-gray-900 font-extrabold text-2xl shadow-lg">
+                    🌱
+                </div>
+                <div>
+                    <h1 class="text-lg md:text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-amber-300 via-orange-300 to-emerald-400">
+                        NATURAL UMAMI 3D PROTOTYPE
+                    </h1>
+                    <p class="text-xs text-gray-300">ผงนัวสมุนไพรพืชตกเกรดธรรมชาติ 100% (Upcycled Food Innovation)</p>
+                </div>
+            </div>
+            <div class="hidden lg:flex items-center space-x-3">
+                <span class="bg-emerald-500/20 text-emerald-300 text-xs px-3 py-1 rounded-full border border-emerald-500/30">
+                    <i class="fa-solid fa-leaf mr-1"></i> 0% Sodium Added
+                </span>
+                <span class="bg-amber-500/20 text-amber-300 text-xs px-3 py-1 rounded-full border border-amber-500/30">
+                    <i class="fa-solid fa-bolt mr-1"></i> COGS: 12.84 ฿/ซอง
+                </span>
+            </div>
+        </header>
+
+        <!-- Main Content Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 my-auto py-3">
+            
+            <!-- Left Panel: Formulas & Active Compounds -->
+            <div class="md:col-span-4 lg:col-span-3 space-y-3 max-h-[75vh] overflow-y-auto custom-scrollbar interactive pr-1">
+                
+                <!-- Blend Ratio Box -->
+                <div class="glass-panel p-4 rounded-2xl shadow-xl space-y-3">
+                    <h3 class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center justify-between">
+                        <span><i class="fa-solid fa-scale-balanced mr-1.5"></i> สูตรสัดส่วนผสม (Blend Ratio)</span>
+                        <span class="text-gray-400">100g Pouch</span>
+                    </h3>
+                    
+                    <div class="space-y-2 text-xs">
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-amber-200">🌽 ข้าวโพดหวานตกเกรด</span>
+                                <span class="font-bold text-amber-400">50% (50g)</span>
+                            </div>
+                            <div class="w-full bg-gray-700 h-1.5 rounded-full overflow-hidden">
+                                <div class="bg-amber-400 h-1.5 rounded-full" style="width: 50%"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-purple-200">🧅 หอมแดงตกเกรด</span>
+                                <span class="font-bold text-purple-400">20% (20g)</span>
+                            </div>
+                            <div class="w-full bg-gray-700 h-1.5 rounded-full overflow-hidden">
+                                <div class="bg-purple-400 h-1.5 rounded-full" style="width: 20%"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-gray-200">🧄 กระเทียมตกเกรด</span>
+                                <span class="font-bold text-yellow-200">15% (15g)</span>
+                            </div>
+                            <div class="w-full bg-gray-700 h-1.5 rounded-full overflow-hidden">
+                                <div class="bg-yellow-200 h-1.5 rounded-full" style="width: 15%"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-emerald-200">🌿 รากผักชี/ผักชี</span>
+                                <span class="font-bold text-emerald-400">10% (10g)</span>
+                            </div>
+                            <div class="w-full bg-gray-700 h-1.5 rounded-full overflow-hidden">
+                                <div class="bg-emerald-400 h-1.5 rounded-full" style="width: 10%"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-gray-300">🌶️ พริกไทยตกเกรด</span>
+                                <span class="font-bold text-gray-300">5% (5g)</span>
+                            </div>
+                            <div class="w-full bg-gray-700 h-1.5 rounded-full overflow-hidden">
+                                <div class="bg-gray-400 h-1.5 rounded-full" style="width: 5%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-2 bg-emerald-950/40 border border-emerald-500/30 rounded-xl text-[11px] text-emerald-300">
+                        <i class="fa-solid fa-check-circle mr-1"></i> ไม่เติมเกลือ • ไม่เติมน้ำตาล • ไม่ใส่สารกันก้อน
+                    </div>
+                </div>
+
+                <!-- Natural Active Compounds -->
+                <div class="glass-panel p-4 rounded-2xl shadow-xl space-y-2.5">
+                    <h3 class="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid fa-flask"></i> สารธรรมชาติทดแทนสารสังเคราะห์
+                    </h3>
+                    <div class="space-y-2 text-[11px]">
+                        <div class="p-2 rounded-lg bg-gray-800/60 border border-amber-500/20">
+                            <span class="font-bold text-amber-300">🌽 Free Glutamic & Sucrose</span>
+                            <p class="text-gray-300 mt-0.5">ทดแทนผงชูรส (MSG) & น้ำตาลทราย ให้รสหวานโปร่งและอูมามิฐาน</p>
+                        </div>
+                        <div class="p-2 rounded-lg bg-gray-800/60 border border-yellow-500/20">
+                            <span class="font-bold text-yellow-300">🧄 Kokumi Peptides & Allicin</span>
+                            <p class="text-gray-300 mt-0.5">ทดแทนสารชูรส I+G เพิ่มความนัวลึก ละมุน ติดโคนลิ้นยาวนาน</p>
+                        </div>
+                        <div class="p-2 rounded-lg bg-gray-800/60 border border-purple-500/20">
+                            <span class="font-bold text-purple-300">🧅 Fructans & Free Amino Acids</span>
+                            <p class="text-gray-300 mt-0.5">ทดแทนผงซุปก้อน เกิด Maillard Reaction ให้กลิ่นคั่วหวานกลมกล่อม</p>
+                        </div>
+                        <div class="p-2 rounded-lg bg-gray-800/60 border border-emerald-500/20">
+                            <span class="font-bold text-emerald-300">🌿 Linalool (น้ำมันหอมระเหย)</span>
+                            <p class="text-gray-300 mt-0.5">ทดแทนกลิ่นสังเคราะห์ ดับกลิ่นคาว กระตุ้นความอยากอาหาร</p>
+                        </div>
+                        <div class="p-2 rounded-lg bg-gray-800/60 border border-gray-500/20">
+                            <span class="font-bold text-gray-300">🌶️ Piperine</span>
+                            <p class="text-gray-300 mt-0.5">ทดแทนเกลือโซเดียม กระตุ้นต่อมรับรสให้รับรสไวขึ้นโดยไม่ง้อความเค็ม</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Middle Empty Area for 3D Viewport -->
+            <div class="md:col-span-4 lg:col-span-6 min-h-[300px] md:min-h-[460px]"></div>
+
+            <!-- Right Panel: Controls & Business Stats -->
+            <div class="md:col-span-4 lg:col-span-3 space-y-3 max-h-[75vh] overflow-y-auto custom-scrollbar interactive pl-1">
+                
+                <!-- 3D View Controls -->
+                <div class="glass-panel p-4 rounded-2xl shadow-xl space-y-3">
+                    <h3 class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid fa-gamepad"></i> ควบคุมบรรจุภัณฑ์ 3D
+                    </h3>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button id="btn-front" class="px-3 py-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-gray-950 font-bold rounded-xl text-xs transition shadow-md flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-eye"></i> ด้านหน้า
+                        </button>
+                        <button id="btn-back" class="px-3 py-2 bg-gray-800 hover:bg-gray-700 text-gray-200 font-bold rounded-xl text-xs transition border border-gray-700 flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-rotate-left"></i> ด้านหลัง
+                        </button>
+                    </div>
+
+                    <button id="btn-rotate" class="w-full px-3 py-2 bg-gray-800/90 hover:bg-gray-700 text-amber-300 rounded-xl text-xs font-semibold border border-amber-500/30 transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-arrows-spin"></i>
+                        <span>เปิด / ปิด การหมุน 360°</span>
+                    </button>
+
+                    <div class="space-y-1 pt-1">
+                        <div class="flex justify-between text-xs text-gray-300">
+                            <span>ความเงาฟอยล์ (Foil Reflection)</span>
+                            <span id="roughness-val" class="text-amber-400 font-bold">40%</span>
+                        </div>
+                        <input id="slider-metal" type="range" min="0" max="100" value="40" class="w-full accent-amber-400 bg-gray-700 rounded-lg h-2 cursor-pointer">
+                    </div>
+
+                    <div class="space-y-1">
+                        <label class="text-xs text-gray-300">บรรยากาศ Studio:</label>
+                        <select id="select-bg" class="w-full bg-gray-800 text-xs text-gray-200 p-2 rounded-xl border border-gray-700 focus:outline-none focus:border-amber-400">
+                            <option value="dark">Dark Luxury Lab (เข้มสุขุม)</option>
+                            <option value="warm">Warm Agriculture (สีอบอุ่น)</option>
+                            <option value="light">Clean White Studio (ขาวสว่าง)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Financial & Unit Economics -->
+                <div class="glass-panel p-4 rounded-2xl shadow-xl space-y-2.5">
+                    <h3 class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid fa-chart-line"></i> ต้นทุน & ราคาขาย (Unit Economics)
+                    </h3>
+                    <div class="space-y-2 text-xs">
+                        <div class="flex justify-between p-2 rounded-lg bg-gray-800/50">
+                            <span class="text-gray-400">ต้นทุนวัตถุดิบ (Raw Material/1kg)</span>
+                            <span class="font-bold text-gray-200">63.40 ฿</span>
+                        </div>
+                        <div class="flex justify-between p-2 rounded-lg bg-gray-800/50">
+                            <span class="text-gray-400">ต้นทุนการผลิตรวม (COGS/1kg)</span>
+                            <span class="font-bold text-gray-200">128.40 ฿</span>
+                        </div>
+                        <div class="flex justify-between p-2 bg-amber-500/10 border border-amber-500/30 rounded-lg">
+                            <span class="text-amber-200">ต้นทุนต่อซอง (100g Pouch)</span>
+                            <span class="font-bold text-amber-300">12.84 ฿</span>
+                        </div>
+                        <div class="flex justify-between p-2 bg-emerald-500/10 border border-emerald-500/30 rounded-lg">
+                            <span class="text-emerald-200">ราคาขายแนะนำ (SRP)</span>
+                            <span class="font-bold text-emerald-300">59 – 79 ฿</span>
+                        </div>
+                        <div class="p-2 bg-gray-900/80 rounded-lg text-center text-emerald-400 font-bold text-xs">
+                            🔥 Gross Margin: 78.2% – 83.7%
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="glass-panel p-3 rounded-xl interactive text-center text-xs text-gray-400 flex flex-col sm:flex-row justify-between items-center gap-2">
+            <span>🌽 <b>ผงนัวสมุนไพรพืชตกเกรด</b> • นวัตกรรมทดแทนผงชูรสและโซเดียมจากธรรมชาติ</span>
+            <span class="text-amber-400 font-medium"><i class="fa-solid fa-mouse-pointer mr-1"></i> คลิกและลากเพื่อหมุน | Scroll ขยายดูรายละเอียดซอง</span>
+        </footer>
+    </div>
+
+    <!-- Hidden Canvases for Texture Rendering -->
+    <canvas id="frontCanvas" width="1024" height="1536" class="hidden"></canvas>
+    <canvas id="backCanvas" width="1024" height="1536" class="hidden"></canvas>
+
+    <script>
+        // -------------------------------------------------------------
+        // 1. DYNAMIC TEXTURE GENERATOR (สร้างลวดลายหน้า-หลังซอง 100g)
+        // -------------------------------------------------------------
+        function createFrontTexture() {
+            const canvas = document.getElementById('frontCanvas');
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width;
+            const h = canvas.height;
+
+            // Background Linear & Radial Gradient (Nature Warm Gold)
+            const bgGrad = ctx.createLinearGradient(0, 0, 0, h);
+            bgGrad.addColorStop(0, '#FFFBEB');
+            bgGrad.addColorStop(0.2, '#FDE68A');
+            bgGrad.addColorStop(0.55, '#F59E0B');
+            bgGrad.addColorStop(1, '#92400E');
+            ctx.fillStyle = bgGrad;
+            ctx.fillRect(0, 0, w, h);
+
+            // Sunburst background effect
+            ctx.save();
+            ctx.translate(w/2, h*0.42);
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.12)';
+            for(let i=0; i<24; i++) {
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.arc(0, 0, 950, (i*15)*Math.PI/180, ((i+0.5)*15)*Math.PI/180);
+                ctx.closePath();
+                ctx.fill();
+            }
+            ctx.restore();
+
+            drawFoilCrimp(ctx, w, h);
+
+            // Top Ribbon Banner
+            ctx.fillStyle = '#065F46';
+            ctx.fillRect(w*0.1, 120, w*0.8, 55);
+            ctx.fillStyle = '#FFFFFF';
+            ctx.font = 'bold 24px Prompt, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('🌿 100% NATURAL UPCYCLED PLANT-BASED UMAMI 🌿', w/2, 156);
+
+            // Brand Header
+            ctx.fillStyle = '#064E3B';
+            ctx.font = '900 86px Prompt, sans-serif';
+            ctx.fillText('ผงนัว', w/2, 265);
+            
+            ctx.fillStyle = '#B45309';
+            ctx.font = 'bold 34px Prompt, sans-serif';
+            ctx.fillText('NATURAL SEASONING POWDER', w/2, 315);
+
+            // Product Title
+            ctx.fillStyle = '#1F2937';
+            ctx.font = 'bold 50px Prompt, sans-serif';
+            ctx.fillText('สูตรพืชตกเกรด 5 สมุนไพร', w/2, 385);
+
+            ctx.fillStyle = '#4B5563';
+            ctx.font = '26px Prompt, sans-serif';
+            ctx.fillText('SWEET CORN & HERBAL BLEND', w/2, 425);
+
+            // Center Circle Artwork
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(w/2, h*0.53, 270, 0, Math.PI*2);
+            ctx.fillStyle = '#FFFFFF';
+            ctx.shadowColor = 'rgba(0,0,0,0.35)';
+            ctx.shadowBlur = 30;
+            ctx.fill();
+            ctx.lineWidth = 14;
+            ctx.strokeStyle = '#F59E0B';
+            ctx.stroke();
+            ctx.restore();
+
+            // Center Artwork: 5 Plants Illustration
+            drawIngredientsGraphic(ctx, w/2, h*0.53);
+
+            // Ratio Badges at Bottom
+            const badgeY = h * 0.77;
+            drawRatioBadge(ctx, w*0.18, badgeY, '🌽 50%', 'ข้าวโพด');
+            drawRatioBadge(ctx, w*0.34, badgeY, '🧅 20%', 'หอมแดง');
+            drawRatioBadge(ctx, w*0.50, badgeY, '𝄠 15%', 'กระเทียม');
+            drawRatioBadge(ctx, w*0.66, badgeY, '🌿 10%', 'ผักชี');
+            drawRatioBadge(ctx, w*0.82, badgeY, '🌶️ 5%', 'พริกไทย');
+
+            // Bottom Highlight Banner
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.88)';
+            ctx.roundRect(w*0.08, h*0.84, w*0.84, 90, 22);
+            ctx.fill();
+
+            ctx.fillStyle = '#FBBF24';
+            ctx.font = 'bold 28px Prompt, sans-serif';
+            ctx.fillText('❌ ไม่ใส่ผงชูรส (MSG)  ❌ ไม่เติมเกลือโซเดียม  ❌ ไม่เติมน้ำตาล', w/2, h*0.84 + 54);
+
+            // Net Weight
+            ctx.fillStyle = '#1F2937';
+            ctx.font = 'bold 34px Prompt, sans-serif';
+            ctx.fillText('ปริมาณสุทธิ 100 กรัม (Net Wt. 100g)', w/2, h - 130);
+
+            return new THREE.CanvasTexture(canvas);
+        }
+
+        function createBackTexture() {
+            const canvas = document.getElementById('backCanvas');
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width;
+            const h = canvas.height;
+
+            // Background
+            ctx.fillStyle = '#FAFAF9';
+            ctx.fillRect(0, 0, w, h);
+
+            drawFoilCrimp(ctx, w, h);
+
+            // Top Header
+            ctx.fillStyle = '#059669';
+            ctx.fillRect(0, 100, w, 75);
+            ctx.fillStyle = '#FFFFFF';
+            ctx.font = 'bold 32px Prompt, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('ข้อมูลผลิตภัณฑ์ & คุณค่าทางโภชนาการ', w/2, 150);
+
+            ctx.textAlign = 'left';
+
+            // Column 1: Ingredients & Ratio (Left)
+            ctx.fillStyle = '#111827';
+            ctx.font = 'bold 28px Prompt, sans-serif';
+            ctx.fillText('ส่วนประกอบสำคัญ (Percentage Blend):', 70, 230);
+
+            ctx.font = '22px Prompt, sans-serif';
+            ctx.fillStyle = '#374151';
+            const ingredientsList = [
+                '• ผงข้าวโพดหวานตกเกรด (Sweet Corn) 50%',
+                '• ผงหอมแดงตกเกรด (Shallot) 20%',
+                '• ผงกระเทียมตกเกรด (Garlic) 15%',
+                '• ผงรากผักชี / ผักชีตกเกรด (Coriander) 10%',
+                '• ผงพริกไทยตกเกรด (Pepper) 5%'
+            ];
+            ingredientsList.forEach((item, idx) => {
+                ctx.fillText(item, 80, 275 + (idx * 35));
+            });
+
+            // Active Natural Replacement Box
+            ctx.fillStyle = '#ECFDF5';
+            ctx.strokeStyle = '#10B981';
+            ctx.lineWidth = 2;
+            ctx.roundRect(70, 465, 420, 210, 16);
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.fillStyle = '#065F46';
+            ctx.font = 'bold 22px Prompt, sans-serif';
+            ctx.fillText('🌱 กลไกความนัวธรรมชาติ:', 90, 500);
+            ctx.font = '18px Prompt, sans-serif';
+            ctx.fillStyle = '#047857';
+            ctx.fillText('• ข้าวโพด: Free Glutamic แทน MSG', 90, 535);
+            ctx.fillText('• กระเทียม: Kokumi Peptides แทน I+G', 90, 565);
+            ctx.fillText('• หอมแดง: Fructans หอมคั่ว Maillard', 90, 595);
+            ctx.fillText('• ผักชี: Linalool ดับกลิ่นคาว', 90, 625);
+            ctx.fillText('• พริกไทย: Piperine กระตุ้นลิ้นรับรส', 90, 655);
+
+            // Column 2: Nutrition Facts Table (Right)
+            const tableX = 520;
+            ctx.strokeStyle = '#1F2937';
+            ctx.lineWidth = 3;
+            ctx.strokeRect(tableX, 210, 430, 465);
+
+            ctx.fillStyle = '#1F2937';
+            ctx.fillRect(tableX, 210, 430, 45);
+            ctx.fillStyle = '#FFFFFF';
+            ctx.font = 'bold 22px Prompt, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('ข้อมูลโภชนาการ (Nutrition Facts)', tableX + 215, 240);
+
+            ctx.textAlign = 'left';
+            ctx.fillStyle = '#111827';
+            ctx.font = 'bold 19px Prompt, sans-serif';
+            ctx.fillText('หนึ่งหน่วยบริโภค: 1 ช้อนชา (5 กรัม)', tableX + 20, 285);
+            ctx.fillText('จำนวนหน่วยบริโภคต่อซอง: 20 มื้อ', tableX + 20, 310);
+            
+            ctx.beginPath();
+            ctx.moveTo(tableX + 15, 325);
+            ctx.lineTo(tableX + 415, 325);
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            ctx.font = 'bold 20px Prompt, sans-serif';
+            ctx.fillText('คุณค่าทางโภชนาการต่อ 1 มื้อ (5g):', tableX + 20, 355);
+            
+            ctx.font = '19px Prompt, sans-serif';
+            ctx.fillStyle = '#374151';
+            const nutData = [
+                ['พลังงานทั้งหมด', '17 kcal', '(ต่อ 100g: 340 kcal)'],
+                ['โซเดียม (Sodium)', '< 2 mg', '(ต่อ 100g: 40 mg)'],
+                ['น้ำตาลธรรมชาติ', '1.1 g', '(ต่อ 100g: 22 g)'],
+                ['คาร์โบไฮเดรต', '3.6 g', '(ต่อ 100g: 72 g)'],
+                ['โปรตีน', '0.5 g', '(ต่อ 100g: 10 g)'],
+                ['ไขมันทั้งหมด', '0 g', '(ต่อ 100g: 1.5 g)']
+            ];
+
+            nutData.forEach((row, i) => {
+                const y = 390 + (i * 42);
+                ctx.fillText(row[0], tableX + 20, y);
+                ctx.fillStyle = '#059669';
+                ctx.font = 'bold 19px Prompt, sans-serif';
+                ctx.fillText(row[1], tableX + 210, y);
+                ctx.fillStyle = '#6B7280';
+                ctx.font = '16px Prompt, sans-serif';
+                ctx.fillText(row[2], tableX + 285, y);
+                ctx.fillStyle = '#374151';
+                ctx.font = '19px Prompt, sans-serif';
+            });
+
+            // Usage & Directions Banner
+            ctx.fillStyle = '#FFFBEB';
+            ctx.strokeStyle = '#F59E0B';
+            ctx.lineWidth = 2;
+            ctx.roundRect(70, 700, 880, 130, 16);
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.fillStyle = '#92400E';
+            ctx.font = 'bold 24px Prompt, sans-serif';
+            ctx.fillText('🍳 วิธีการใช้งาน (Directions):', 95, 740);
+            ctx.font = '21px Prompt, sans-serif';
+            ctx.fillStyle = '#78350F';
+            ctx.fillText('ใช้เพียง 1/2 - 1 ช้อนชา (2.5g - 5g) ปรุงแกง ผัด หมัก ต้ม หรือโรยหน้าอาหาร', 95, 780);
+            ctx.fillText('เพื่อเพิ่มความหอม อูมามิ ลึก กลมกล่อม โดยไม่ต้องพึ่งผงชูรสและเกลือโซเดียม', 95, 810);
+
+            // FDA / Halal / Barcode Section
+            ctx.fillStyle = '#E5E7EB';
+            ctx.roundRect(70, 860, 360, 120, 12);
+            ctx.fill();
+            ctx.fillStyle = '#1F2937';
+            ctx.font = 'bold 22px Prompt, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('เลขที่ อย. / FDA Registered', 250, 905);
+            ctx.fillText('10-1-99969-5-0001', 250, 945);
+
+            // Fake Barcode
+            ctx.fillStyle = '#000000';
+            for(let x = 550; x < 910; x += 14) {
+                const bw = Math.random() > 0.45 ? 7 : 3;
+                ctx.fillRect(x, 860, bw, 95);
+            }
+            ctx.font = '18px monospace';
+            ctx.fillText('8 859012 998877', 730, 978);
+
+            // Manufacturer Details
+            ctx.textAlign = 'center';
+            ctx.font = '20px Prompt, sans-serif';
+            ctx.fillStyle = '#4B5563';
+            ctx.fillText('วิจัยและพัฒนาโดย: โครงการแปรรูปพืชตกเกรดเพื่อสร้างมูลค่าเพิ่ม (Upcycled Food Tech)', w/2, 1330);
+            ctx.fillText('ผลิตโดย: Green Umami Co., Ltd. | วันหมดอายุ: ดูใต้บรรจุภัณฑ์', w/2, 1370);
+
+            return new THREE.CanvasTexture(canvas);
+        }
+
+        function drawFoilCrimp(ctx, w, h) {
+            ctx.fillStyle = 'rgba(0,0,0,0.08)';
+            for(let y=0; y<85; y+=7) {
+                ctx.fillRect(0, y, w, 3.5);
+            }
+            for(let y=h-100; y<h; y+=7) {
+                ctx.fillRect(0, y, w, 3.5);
+            }
+        }
+
+        function drawIngredientsGraphic(ctx, cx, cy) {
+            ctx.save();
+            ctx.translate(cx, cy);
+
+            // 1. CORN (Center)
+            ctx.fillStyle = '#F59E0B';
+            ctx.beginPath();
+            ctx.ellipse(0, 10, 65, 135, 0, 0, Math.PI*2);
+            ctx.fill();
+            ctx.fillStyle = '#D97706';
+            for(let ix=-40; ix<=40; ix+=20) {
+                for(let iy=-90; iy<=90; iy+=22) {
+                    ctx.beginPath();
+                    ctx.arc(ix, iy, 7.5, 0, Math.PI*2);
+                    ctx.fill();
+                }
+            }
+            // Leaves
+            ctx.fillStyle = '#65A30D';
+            ctx.beginPath();
+            ctx.moveTo(-65, 125);
+            ctx.quadraticCurveTo(-120, 0, -35, -125);
+            ctx.quadraticCurveTo(-55, 40, -65, 125);
+            ctx.fill();
+
+            // 2. CORIANDER (Left)
+            ctx.fillStyle = '#10B981';
+            ctx.beginPath();
+            ctx.arc(-140, -30, 38, 0, Math.PI*2);
+            ctx.arc(-170, 10, 32, 0, Math.PI*2);
+            ctx.arc(-130, 35, 30, 0, Math.PI*2);
+            ctx.fill();
+
+            // 3. GARLIC (Right)
+            ctx.fillStyle = '#F3F4F6';
+            ctx.beginPath();
+            ctx.arc(140, 25, 48, 0, Math.PI*2);
+            ctx.fill();
+            ctx.strokeStyle = '#E5E7EB';
+            ctx.lineWidth = 4;
+            ctx.stroke();
+
+            // 4. SHALLOT (Bottom Right)
+            ctx.fillStyle = '#9333EA';
+            ctx.beginPath();
+            ctx.ellipse(95, 110, 38, 48, -0.3, 0, Math.PI*2);
+            ctx.fill();
+
+            // 5. PEPPERCORNS (Scatter)
+            ctx.fillStyle = '#1F2937';
+            const peppers = [[-85, 115], [-110, 85], [45, 135], [-135, -95], [150, -45]];
+            peppers.forEach(([px, py]) => {
+                ctx.beginPath();
+                ctx.arc(px, py, 11, 0, Math.PI*2);
+                ctx.fill();
+            });
+
+            ctx.restore();
+        }
+
+        function drawRatioBadge(ctx, x, y, title, subtitle) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.fillStyle = '#FFFFFF';
+            ctx.beginPath();
+            ctx.arc(0, 0, 42, 0, Math.PI*2);
+            ctx.fill();
+            ctx.lineWidth = 4;
+            ctx.strokeStyle = '#F59E0B';
+            ctx.stroke();
+
+            ctx.fillStyle = '#1F2937';
+            ctx.font = 'bold 20px Prompt, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(title, 0, 7);
+
+            ctx.fillStyle = '#4B5563';
+            ctx.font = '16px Prompt, sans-serif';
+            ctx.fillText(subtitle, 0, 65);
+            ctx.restore();
+        }
+
+        // Helper Polyfill for Canvas RoundRect
+        if (!CanvasRenderingContext2D.prototype.roundRect) {
+            CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
+                if (w < 2 * r) r = w / 2;
+                if (h < 2 * r) r = h / 2;
+                this.beginPath();
+                this.moveTo(x + r, y);
+                this.arcTo(x + w, y, x + w, y + h, r);
+                this.arcTo(x + w, y + h, x, y + h, r);
+                this.arcTo(x, y + h, x, y, r);
+                this.arcTo(x, y, x + w, y, r);
+                this.closePath();
+                return this;
+            };
+        }
+
+        // -------------------------------------------------------------
+        // 2. THREE.JS SCENE & 3D POUCH MESH
+        // -------------------------------------------------------------
+        let scene, camera, renderer, controls;
+        let pouchMeshFront, pouchMeshBack, pouchGroup;
+        let autoRotate = true;
+        let foilMaterialFront, foilMaterialBack;
+        let targetRotationY = 0;
+
+        function init3D() {
+            const container = document.getElementById('canvas-container');
+
+            // Scene
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color('#0b0f19');
+
+            // Camera
+            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 0, 11);
+
+            // Renderer
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            container.appendChild(renderer.domElement);
+
+            // OrbitControls
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.maxDistance = 18;
+            controls.minDistance = 5;
+
+            // Lights
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.75);
+            scene.add(ambientLight);
+
+            const keyLight = new THREE.DirectionalLight(0xfff5e6, 1.5);
+            keyLight.position.set(6, 8, 8);
+            keyLight.castShadow = true;
+            keyLight.shadow.mapSize.width = 2048;
+            keyLight.shadow.mapSize.height = 2048;
+            scene.add(keyLight);
+
+            const fillLight = new THREE.DirectionalLight(0xd1fae5, 0.7);
+            fillLight.position.set(-8, 3, -5);
+            scene.add(fillLight);
+
+            const rimLight = new THREE.DirectionalLight(0xffffff, 1.1);
+            rimLight.position.set(0, -6, 6);
+            scene.add(rimLight);
+
+            // Shadow Floor Plane
+            const shadowPlaneGeo = new THREE.PlaneGeometry(30, 30);
+            const shadowPlaneMat = new THREE.ShadowMaterial({ opacity: 0.35 });
+            const shadowPlane = new THREE.Mesh(shadowPlaneGeo, shadowPlaneMat);
+            shadowPlane.rotation.x = -Math.PI / 2;
+            shadowPlane.position.y = -3.2;
+            shadowPlane.receiveShadow = true;
+            scene.add(shadowPlane);
+
+            // Pouch Group
+            pouchGroup = new THREE.Group();
+            scene.add(pouchGroup);
+
+            // Build Stand-up Cushion Foil Pouch Mesh
+            createPouchMesh();
+
+            // Resize Event
+            window.addEventListener('resize', onWindowResize);
+
+            // Animation Loop
+            animate();
+        }
+
+        function createPouchMesh() {
+            const width = 3.7;
+            const height = 5.5;
+            const segX = 48;
+            const segY = 64;
+
+            // Front Mesh Geometry
+            const frontGeo = new THREE.PlaneGeometry(width, height, segX, segY);
+            const posAttr = frontGeo.attributes.position;
+
+            for (let i = 0; i < posAttr.count; i++) {
+                let x = posAttr.getX(i);
+                let y = posAttr.getY(i);
+
+                let u = (x + width/2) / width;
+                let v = (y + height/2) / height;
+
+                let z = 0;
+
+                // Cushion Curve (Pillowy pouch body)
+                if (v > 0.08 && v < 0.92) {
+                    let vNorm = (v - 0.08) / 0.84;
+                    z = 0.54 * Math.sin(Math.PI * vNorm) * Math.sin(Math.PI * u);
+                }
+
+                // Crimp ridges
+                if (v >= 0.92 || v <= 0.08) {
+                    z += Math.sin(x * 60) * 0.008;
+                }
+
+                posAttr.setZ(i, z);
+            }
+            frontGeo.computeVertexNormals();
+
+            // Textures
+            const frontTex = createFrontTexture();
+            const backTex = createBackTexture();
+
+            // Materials
+            foilMaterialFront = new THREE.MeshStandardMaterial({
+                map: frontTex,
+                roughness: 0.40,
+                metalness: 0.30,
+                side: THREE.FrontSide
+            });
+
+            foilMaterialBack = new THREE.MeshStandardMaterial({
+                map: backTex,
+                roughness: 0.40,
+                metalness: 0.30,
+                side: THREE.FrontSide
+            });
+
+            pouchMeshFront = new THREE.Mesh(frontGeo, foilMaterialFront);
+            pouchMeshFront.castShadow = true;
+
+            // Back Mesh (Mirrored)
+            const backGeo = frontGeo.clone();
+            const backPosAttr = backGeo.attributes.position;
+            for(let i=0; i<backPosAttr.count; i++) {
+                backPosAttr.setZ(i, -backPosAttr.getZ(i));
+            }
+            backGeo.computeVertexNormals();
+
+            pouchMeshBack = new THREE.Mesh(backGeo, foilMaterialBack);
+            pouchMeshBack.rotation.y = Math.PI;
+            pouchMeshBack.castShadow = true;
+
+            pouchGroup.add(pouchMeshFront);
+            pouchGroup.add(pouchMeshBack);
+
+            pouchGroup.position.y = 0.2;
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            if (autoRotate) {
+                pouchGroup.rotation.y += 0.008;
+            } else {
+                pouchGroup.rotation.y += (targetRotationY - pouchGroup.rotation.y) * 0.08;
+            }
+
+            pouchGroup.position.y = 0.2 + Math.sin(Date.now() * 0.0015) * 0.08;
+
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        // Event Listeners
+        document.getElementById('btn-front').addEventListener('click', () => {
+            autoRotate = false;
+            targetRotationY = 0;
+        });
+
+        document.getElementById('btn-back').addEventListener('click', () => {
+            autoRotate = false;
+            targetRotationY = Math.PI;
+        });
+
+        document.getElementById('btn-rotate').addEventListener('click', () => {
+            autoRotate = !autoRotate;
+        });
+
+        document.getElementById('slider-metal').addEventListener('input', (e) => {
+            const val = e.target.value / 100;
+            document.getElementById('roughness-val').innerText = `${e.target.value}%`;
+            if (foilMaterialFront && foilMaterialBack) {
+                foilMaterialFront.metalness = val * 0.75;
+                foilMaterialFront.roughness = 0.55 - (val * 0.35);
+                foilMaterialBack.metalness = val * 0.75;
+                foilMaterialBack.roughness = 0.55 - (val * 0.35);
+            }
+        });
+
+        document.getElementById('select-bg').addEventListener('change', (e) => {
+            const mode = e.target.value;
+            if (mode === 'dark') {
+                scene.background = new THREE.Color('#0b0f19');
+            } else if (mode === 'warm') {
+                scene.background = new THREE.Color('#22150c');
+            } else if (mode === 'light') {
+                scene.background = new THREE.Color('#f3f4f6');
+            }
+        });
+
+        window.addEventListener('load', init3D);
+    </script>
+</body>
+</html>

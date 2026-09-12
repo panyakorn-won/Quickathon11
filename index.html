@@ -341,11 +341,11 @@
 
             // Ratio Badges at Bottom
             const badgeY = h * 0.77;
-            drawRatioBadge(ctx, w*0.18, badgeY, '🌽 50%', 'ข้าวโพด');
-            drawRatioBadge(ctx, w*0.34, badgeY, '🧅 20%', 'หอมแดง');
-            drawRatioBadge(ctx, w*0.50, badgeY, '𝄠 15%', 'กระเทียม');
-            drawRatioBadge(ctx, w*0.66, badgeY, '🌿 10%', 'ผักชี');
-            drawRatioBadge(ctx, w*0.82, badgeY, '🌶️ 5%', 'พริกไทย');
+            drawRatioBadge(ctx, w*0.18, badgeY, '🌽 75%', 'ข้าวโพด');
+            
+            drawRatioBadge(ctx, w*0.393, badgeY, '𝄠 12.5%', 'กระเทียม');
+            drawRatioBadge(ctx, w*0.606, badgeY, '🌿 6.25%', 'ผักชี');
+            drawRatioBadge(ctx, w*0.82, badgeY, '🌶️ 6.25%', 'พริกไทย');
 
             // Bottom Highlight Banner
             ctx.fillStyle = 'rgba(15, 23, 42, 0.88)';
@@ -359,7 +359,7 @@
             // Net Weight
             ctx.fillStyle = '#1F2937';
             ctx.font = 'bold 34px Prompt, sans-serif';
-            ctx.fillText('ปริมาณสุทธิ 100 กรัม (Net Wt. 100g)', w/2, h - 130);
+            ctx.fillText('ปริมาณสุทธิ 80 กรัม (Net Wt. 80g)', w/2, h - 130);
 
             return new THREE.CanvasTexture(canvas);
         }

@@ -60,8 +60,19 @@
         <!-- Header -->
         <header class="flex justify-between items-center glass-panel p-3 md:p-4 rounded-2xl interactive shadow-2xl">
             <div class="flex items-center space-x-3">
-                <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-amber-500 via-yellow-400 to-emerald-500 flex items-center justify-center text-gray-900 font-extrabold text-2xl shadow-lg">
-                    🌱
+                <div class="w-11 h-11 rounded-xl bg-gray-900 border border-white/10 flex items-center justify-center shadow-lg overflow-hidden">
+                    <svg viewBox="0 0 40 40" class="w-9 h-9" xmlns="http://www.w3.org/2000/svg">
+                        <ellipse cx="20" cy="35.5" rx="9" ry="1.6" fill="rgba(0,0,0,0.35)"/>
+                        <path d="M11 9 C11 6.8 12.8 5 15 5 L25 5 C27.2 5 29 6.8 29 9 L30 30 C30 33 27 35.5 24 35.5 L16 35.5 C13 35.5 10 33 10 30 Z" fill="#FDFBF3" stroke="#78350F" stroke-width="0.8"/>
+                        <path d="M11 9 L13.2 6.8 L15.6 9 L18 6.8 L20.4 9 L22.8 6.8 L25.2 9 L27.6 6.8 L29.2 9" fill="none" stroke="#78350F" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+                        <line x1="14.2" y1="12" x2="13.4" y2="32" stroke="#E7DFC6" stroke-width="1"/>
+                        <line x1="25.8" y1="12" x2="26.6" y2="32" stroke="#E7DFC6" stroke-width="1"/>
+                        <g transform="translate(20,21)">
+                            <path d="M0,7 C0,7 -6,4.5 -5.5,-2 C-5.5,-2 1.5,-3.5 0,7 Z" fill="#22C55E"/>
+                            <path d="M0,7 C0,7 6,3.5 5,-3 C5,-3 -1.5,-4.5 0,7 Z" fill="#16A34A"/>
+                            <line x1="0" y1="7" x2="0" y2="11" stroke="#A16207" stroke-width="1.6" stroke-linecap="round"/>
+                        </g>
+                    </svg>
                 </div>
                 <div>
                     <h1 class="text-lg md:text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-amber-300 via-orange-300 to-emerald-400">
@@ -574,59 +585,159 @@
             ctx.save();
             ctx.translate(cx, cy);
 
-            // 1. CABBAGE (Center) - layered round head with visible leaf ribs
-            ctx.fillStyle = '#84CC16';
+            function resetShadow() {
+                ctx.shadowColor = 'rgba(0,0,0,0)';
+                ctx.shadowBlur = 0;
+                ctx.shadowOffsetX = 0;
+                ctx.shadowOffsetY = 0;
+            }
+
+            // 0. SOFT GROUND SHADOW beneath the whole cluster
+            ctx.save();
+            ctx.fillStyle = 'rgba(0,0,0,0.16)';
+            ctx.shadowColor = 'rgba(0,0,0,0.3)';
+            ctx.shadowBlur = 25;
+            ctx.beginPath();
+            ctx.ellipse(0, 148, 175, 26, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+
+            // 1. CABBAGE (Center) - glossy layered head with soft shadow + veins
+            ctx.save();
+            ctx.shadowColor = 'rgba(0,0,0,0.35)';
+            ctx.shadowBlur = 18;
+            ctx.shadowOffsetX = 3;
+            ctx.shadowOffsetY = 10;
+            const cabbageGrad = ctx.createRadialGradient(-25, -22, 8, 0, 5, 105);
+            cabbageGrad.addColorStop(0, '#ECFCCB');
+            cabbageGrad.addColorStop(0.45, '#BEF264');
+            cabbageGrad.addColorStop(0.8, '#84CC16');
+            cabbageGrad.addColorStop(1, '#4D7C0F');
+            ctx.fillStyle = cabbageGrad;
             ctx.beginPath();
             ctx.arc(0, 5, 100, 0, Math.PI*2);
             ctx.fill();
-            ctx.fillStyle = '#A3E635';
-            ctx.beginPath();
-            ctx.arc(0, 5, 74, 0, Math.PI*2);
-            ctx.fill();
-            ctx.fillStyle = '#D9F99D';
-            ctx.beginPath();
-            ctx.arc(0, 5, 42, 0, Math.PI*2);
-            ctx.fill();
-            ctx.strokeStyle = '#65A30D';
-            ctx.lineWidth = 3;
-            for (let i = 0; i < 10; i++) {
-                const ang = (i / 10) * Math.PI * 2;
+            ctx.restore();
+
+            resetShadow();
+            const cabbageLeafLayer = (r, c1, c2) => {
+                const g = ctx.createRadialGradient(-r*0.25, -r*0.2, r*0.08, 0, 5, r);
+                g.addColorStop(0, c1);
+                g.addColorStop(1, c2);
+                ctx.fillStyle = g;
+                ctx.beginPath();
+                ctx.arc(0, 5, r, 0, Math.PI*2);
+                ctx.fill();
+            };
+            cabbageLeafLayer(74, '#D9F99D', '#A3E635');
+            cabbageLeafLayer(42, '#F7FEE7', '#D9F99D');
+
+            // Leaf veins as gentle curves
+            ctx.strokeStyle = 'rgba(101,163,13,0.55)';
+            ctx.lineWidth = 2.5;
+            for (let i = 0; i < 12; i++) {
+                const ang = (i / 12) * Math.PI * 2;
+                const midX = Math.cos(ang) * 55, midY = 5 + Math.sin(ang) * 55;
+                const endX = Math.cos(ang) * 97, endY = 5 + Math.sin(ang) * 97;
                 ctx.beginPath();
                 ctx.moveTo(0, 5);
-                ctx.lineTo(Math.cos(ang) * 96, 5 + Math.sin(ang) * 96);
+                ctx.quadraticCurveTo(midX * 1.05, midY * 0.95, endX, endY);
                 ctx.stroke();
             }
 
-            // 2. SHIITAKE MUSHROOM (Left)
+            // Glossy highlight
+            const cabbageHighlight = ctx.createRadialGradient(-38, -32, 2, -38, -32, 58);
+            cabbageHighlight.addColorStop(0, 'rgba(255,255,255,0.55)');
+            cabbageHighlight.addColorStop(1, 'rgba(255,255,255,0)');
+            ctx.fillStyle = cabbageHighlight;
+            ctx.beginPath();
+            ctx.arc(0, 5, 100, 0, Math.PI*2);
+            ctx.fill();
+
+            // 2. SHIITAKE MUSHROOM (Left) - gradient cap/stem, gills, shadow
             ctx.save();
             ctx.translate(-155, 30);
-            ctx.fillStyle = '#E7E5E4';
-            ctx.fillRect(-9, 0, 18, 55);
-            ctx.fillStyle = '#78350F';
+
+            ctx.save();
+            ctx.shadowColor = 'rgba(0,0,0,0.35)';
+            ctx.shadowBlur = 14;
+            ctx.shadowOffsetX = 3;
+            ctx.shadowOffsetY = 9;
+
+            const stemGrad = ctx.createLinearGradient(-9, 0, 9, 0);
+            stemGrad.addColorStop(0, '#C4C0BB');
+            stemGrad.addColorStop(0.5, '#F5F5F4');
+            stemGrad.addColorStop(1, '#A8A29E');
+            ctx.fillStyle = stemGrad;
+            ctx.beginPath();
+            ctx.moveTo(-8, 0);
+            ctx.quadraticCurveTo(-10, 30, -7, 55);
+            ctx.lineTo(7, 55);
+            ctx.quadraticCurveTo(10, 30, 8, 0);
+            ctx.closePath();
+            ctx.fill();
+
+            const capGrad = ctx.createRadialGradient(-15, -24, 5, 0, -8, 55);
+            capGrad.addColorStop(0, '#C2740D');
+            capGrad.addColorStop(0.5, '#92400E');
+            capGrad.addColorStop(1, '#4A2409');
+            ctx.fillStyle = capGrad;
             ctx.beginPath();
             ctx.ellipse(0, -8, 46, 34, 0, Math.PI, 0, true);
             ctx.fill();
-            ctx.fillStyle = '#92400E';
+            ctx.restore();
+
+            // Gills on underside (clipped to cap shape)
+            ctx.save();
             ctx.beginPath();
-            ctx.moveTo(-30, -18);
-            ctx.lineTo(0, -30);
-            ctx.lineTo(24, -14);
-            ctx.stroke();
-            ctx.strokeStyle = '#5C2E0C';
+            ctx.ellipse(0, -8, 46, 34, 0, Math.PI, 0, true);
+            ctx.clip();
+            ctx.strokeStyle = 'rgba(0,0,0,0.25)';
+            ctx.lineWidth = 1.3;
+            for (let i = -5; i <= 5; i++) {
+                ctx.beginPath();
+                ctx.moveTo(0, -8);
+                ctx.lineTo(i * 9, 22);
+                ctx.stroke();
+            }
+            ctx.restore();
+
+            // Cap crackle texture + glossy highlight
+            ctx.strokeStyle = 'rgba(255,255,255,0.22)';
             ctx.lineWidth = 2;
             ctx.beginPath();
             ctx.moveTo(-28, -16); ctx.lineTo(4, -32);
             ctx.moveTo(-12, -24); ctx.lineTo(20, -14);
+            ctx.moveTo(-32, -8); ctx.lineTo(-10, -30);
             ctx.stroke();
+
+            const capHighlight = ctx.createRadialGradient(-16, -25, 2, -16, -25, 32);
+            capHighlight.addColorStop(0, 'rgba(255,255,255,0.35)');
+            capHighlight.addColorStop(1, 'rgba(255,255,255,0)');
+            ctx.fillStyle = capHighlight;
+            ctx.beginPath();
+            ctx.ellipse(0, -8, 46, 34, 0, Math.PI, 0, true);
+            ctx.fill();
             ctx.restore();
 
-            // 3. ASPARAGUS SPEARS (Right)
+            // 3. ASPARAGUS SPEARS (Right) - gradient shading, scale texture, shadow
             ctx.save();
             ctx.translate(140, -10);
             const spearOffsets = [-26, 0, 26];
+
+            ctx.save();
+            ctx.shadowColor = 'rgba(0,0,0,0.3)';
+            ctx.shadowBlur = 12;
+            ctx.shadowOffsetX = 3;
+            ctx.shadowOffsetY = 8;
             spearOffsets.forEach((ox, idx) => {
                 const len = 150 - Math.abs(idx - 1) * 25;
-                ctx.fillStyle = '#4D7C0F';
+                const spearGrad = ctx.createLinearGradient(ox - 9, 0, ox + 9, 0);
+                spearGrad.addColorStop(0, '#365314');
+                spearGrad.addColorStop(0.45, '#65A30D');
+                spearGrad.addColorStop(0.55, '#84CC16');
+                spearGrad.addColorStop(1, '#3F6212');
+                ctx.fillStyle = spearGrad;
                 ctx.beginPath();
                 ctx.moveTo(ox - 9, len/2);
                 ctx.lineTo(ox - 5, -len/2);
@@ -634,7 +745,8 @@
                 ctx.lineTo(ox + 9, len/2);
                 ctx.closePath();
                 ctx.fill();
-                ctx.fillStyle = '#365314';
+
+                ctx.fillStyle = '#2F4A11';
                 ctx.beginPath();
                 ctx.moveTo(ox - 5, -len/2);
                 ctx.lineTo(ox, -len/2 - 16);
@@ -644,22 +756,64 @@
             });
             ctx.restore();
 
-            // 4. SEA SALT CRYSTALS (Bottom scatter)
-            ctx.fillStyle = '#F8FAFC';
-            ctx.strokeStyle = '#CBD5E1';
-            ctx.lineWidth = 1.5;
+            // Highlight strip + scale marks (no shadow)
+            spearOffsets.forEach((ox, idx) => {
+                const len = 150 - Math.abs(idx - 1) * 25;
+                ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.moveTo(ox - 1, len/2 - 5);
+                ctx.lineTo(ox - 1, -len/2 + 8);
+                ctx.stroke();
+
+                ctx.strokeStyle = 'rgba(54,83,20,0.4)';
+                ctx.lineWidth = 1;
+                for (let s = -len/2 + 20; s < len/2 - 10; s += 14) {
+                    ctx.beginPath();
+                    ctx.moveTo(ox - 6, s);
+                    ctx.lineTo(ox + 6, s - 4);
+                    ctx.stroke();
+                }
+            });
+            ctx.restore();
+
+            // 4. SEA SALT CRYSTALS (Bottom scatter) - glassy gradient + sparkle + shadow
             const salts = [[-90, 120, 10], [-55, 145, 8], [-15, 155, 12], [30, 148, 9], [70, 128, 11], [100, 155, 8]];
             salts.forEach(([sx, sy, sz]) => {
                 ctx.save();
                 ctx.translate(sx, sy);
                 ctx.rotate(sx * 0.05);
+
+                ctx.shadowColor = 'rgba(0,0,0,0.25)';
+                ctx.shadowBlur = 5;
+                ctx.shadowOffsetX = 1;
+                ctx.shadowOffsetY = 3;
+
+                const saltGrad = ctx.createLinearGradient(-sz/2, -sz/2, sz/2, sz/2);
+                saltGrad.addColorStop(0, '#FFFFFF');
+                saltGrad.addColorStop(0.5, '#F1F5F9');
+                saltGrad.addColorStop(1, '#CBD5E1');
+                ctx.fillStyle = saltGrad;
+                ctx.strokeStyle = '#94A3B8';
+                ctx.lineWidth = 1;
                 ctx.beginPath();
                 ctx.rect(-sz/2, -sz/2, sz, sz);
                 ctx.fill();
                 ctx.stroke();
+
+                ctx.shadowColor = 'rgba(0,0,0,0)';
+                ctx.shadowBlur = 0;
+                ctx.strokeStyle = 'rgba(255,255,255,0.8)';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(-sz*0.3, 0); ctx.lineTo(sz*0.3, 0);
+                ctx.moveTo(0, -sz*0.3); ctx.lineTo(0, sz*0.3);
+                ctx.stroke();
+
                 ctx.restore();
             });
 
+            resetShadow();
             ctx.restore();
         }
 

@@ -14,7 +14,7 @@
     body { font-family: 'Kanit', sans-serif; }
   </style>
 
-  <!-- Import Map สำหรับใช้งาน Three.js ES Modules -->
+  <!-- Import Map สำหรับ Three.js ES Modules -->
   <script type="importmap">
     {
       "imports": {
@@ -26,22 +26,22 @@
 </head>
 <body class="bg-slate-950 text-slate-100 antialiased min-h-screen">
 
-  <!-- Main Layout Container: Vertical on Mobile / Horizontal on Desktop -->
+  <!-- Layout Principal: แนวตั้งบนมือถือ (flex-col) / แนวนอนบนคอมพิวเตอร์ (md:flex-row) -->
   <div class="flex flex-col md:flex-row min-h-screen">
 
-    <!-- 1. ส่วนแสดงผล 3D Canvas (ด้านบนมือถือ / ฝั่งซ้ายคอมพิวเตอร์) -->
-    <div class="w-full h-[40vh] md:w-1/2 md:h-screen sticky top-0 z-20 bg-slate-900 border-b md:border-b-0 md:border-r border-slate-800 relative flex items-center justify-center">
+    <!-- 1. ส่วนแสดงผล 3D Canvas (ปักหมุดอยู่ด้านบนมือถือ / อยู่ฝั่งซ้ายบนคอมพิวเตอร์) -->
+    <div class="w-full h-[45vh] md:w-1/2 md:h-screen sticky top-0 z-20 bg-slate-900 border-b md:border-b-0 md:border-r border-slate-800 relative flex items-center justify-center">
       <div id="canvas-container" class="w-full h-full"></div>
-      <div class="absolute bottom-3 left-3 bg-slate-950/80 backdrop-blur-md px-3 py-1 rounded-full border border-slate-700/50 text-xs text-slate-400 pointer-events-none">
-        💡 หมุน/ซูม ดูชิ้นงาน 3D ได้
+      <div class="absolute bottom-3 left-3 bg-slate-950/80 backdrop-blur-md px-3 py-1 rounded-full border border-slate-700/50 text-xs text-slate-300 pointer-events-none shadow-lg flex items-center gap-1.5">
+        <span>💡</span> หมุน / ซูม ดูซองบรรจุภัณฑ์ 3D ได้
       </div>
     </div>
 
-    <!-- 2. ส่วนแสดงการ์ดข้อมูล (สโครลลงมาดูได้ด้านล่างมือถือ / ฝั่งขวาคอมพิวเตอร์) -->
+    <!-- 2. ส่วนแสดงการ์ดข้อมูล (สโครลลงมาอ่านได้ด้านล่างมือถือ / ฝั่งขวาคอมพิวเตอร์) -->
     <div class="w-full md:w-1/2 p-4 md:p-8 space-y-4 md:space-y-6 z-10 overflow-y-auto">
 
       <!-- Header Card -->
-      <div class="bg-slate-900/80 border border-slate-800 p-4 md:p-5 rounded-2xl shadow-xl flex items-start gap-4">
+      <div class="bg-slate-900/80 border border-slate-800 p-4 md:p-5 rounded-2xl shadow-xl flex items-start gap-4 backdrop-blur-sm">
         <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 to-emerald-500 flex items-center justify-center text-2xl flex-shrink-0 shadow-lg">
           🌱
         </div>
@@ -56,7 +56,7 @@
       </div>
 
       <!-- Blend Ratio Card -->
-      <div class="bg-slate-900/80 border border-slate-800 p-4 md:p-5 rounded-2xl shadow-xl space-y-4">
+      <div class="bg-slate-900/80 border border-slate-800 p-4 md:p-5 rounded-2xl shadow-xl space-y-4 backdrop-blur-sm">
         <div class="flex items-center justify-between border-b border-slate-800 pb-3">
           <div class="flex items-center gap-2">
             <span class="text-amber-400">⚖️</span>
@@ -127,7 +127,7 @@
       </div>
 
       <!-- Natural Substitutes Card -->
-      <div class="bg-slate-900/80 border border-slate-800 p-4 md:p-5 rounded-2xl shadow-xl space-y-3">
+      <div class="bg-slate-900/80 border border-slate-800 p-4 md:p-5 rounded-2xl shadow-xl space-y-3 backdrop-blur-sm">
         <div class="flex items-center gap-2 border-b border-slate-800 pb-3">
           <span class="text-emerald-400">🧪</span>
           <h2 class="font-bold text-emerald-400 text-sm md:text-base">สารธรรมชาติทดแทนสารสังเคราะห์</h2>
@@ -167,72 +167,210 @@
     </div>
   </div>
 
-  <!-- Three.js Implementation -->
+  <!-- Three.js Engine & 3D Pouch Construction -->
   <script type="module">
     import * as THREE from 'three';
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
     const container = document.getElementById('canvas-container');
 
-    // Scene setup
+    // 1. Canvas Setup
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x0f172a); // slate-900
+    scene.background = new THREE.Color(0x0a0f1d);
 
-    // Camera setup
     const camera = new THREE.PerspectiveCamera(
       45, 
       container.clientWidth / container.clientHeight, 
       0.1, 
       1000
     );
-    camera.position.set(0, 1.2, 3.5);
+    camera.position.set(0, 0.4, 3.8);
 
-    // Renderer setup
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(container.clientWidth, container.clientHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.2;
     container.appendChild(renderer.domElement);
 
-    // Orbit Controls
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
+    controls.maxPolarAngle = Math.PI / 1.8;
+    controls.minDistance = 2;
+    controls.maxDistance = 6;
 
-    // Lighting
+    // 2. Lighting Setup (Soft Studio Lighting)
     const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
     scene.add(ambientLight);
 
-    const dirLight = new THREE.DirectionalLight(0xfff0dd, 2);
-    dirLight.position.set(5, 5, 5);
-    scene.add(dirLight);
+    const mainLight = new THREE.DirectionalLight(0xfff5ea, 2.5);
+    mainLight.position.set(4, 6, 5);
+    mainLight.castShadow = true;
+    scene.add(mainLight);
 
-    const pointLight = new THREE.PointLight(0x10b981, 3, 10);
-    pointLight.position.set(-2, 1, 2);
-    scene.add(pointLight);
+    const fillLight = new THREE.DirectionalLight(0x10b981, 1.5);
+    fillLight.position.set(-4, 2, -3);
+    scene.add(fillLight);
 
-    // 3D Prototype Object (Sample Pouch Model)
-    const geometry = new THREE.BoxGeometry(1.2, 1.8, 0.5);
-    const materialArray = [
-      new THREE.MeshStandardMaterial({ color: 0x1e293b }), // Right
-      new THREE.MeshStandardMaterial({ color: 0x1e293b }), // Left
-      new THREE.MeshStandardMaterial({ color: 0x10b981 }), // Top
-      new THREE.MeshStandardMaterial({ color: 0x0f172a }), // Bottom
-      new THREE.MeshStandardMaterial({ color: 0x059669, roughness: 0.3 }), // Front
-      new THREE.MeshStandardMaterial({ color: 0x0f766e })  // Back
-    ];
-    
-    const pouch = new THREE.Mesh(geometry, materialArray);
-    scene.add(pouch);
+    const rimLight = new THREE.PointLight(0xf59e0b, 2, 8);
+    rimLight.position.set(0, 3, -2);
+    scene.add(rimLight);
 
-    // Background Accent Ring
-    const ringGeo = new THREE.TorusGeometry(1.5, 0.015, 16, 100);
-    const ringMat = new THREE.MeshBasicMaterial({ color: 0x10b981, wireframe: true, transparent: true, opacity: 0.2 });
-    const ring = new THREE.Mesh(ringGeo, ringMat);
-    ring.rotation.x = Math.PI / 2;
-    scene.add(ring);
+    // 3. Dynamic Texture Generator (สร้างฉลากสินค้าลงบนซอง 3D)
+    function createPouchTexture() {
+      const canvas = document.createElement('canvas');
+      canvas.width = 1024;
+      canvas.height = 1024;
+      const ctx = canvas.getContext('2d');
 
-    // Handle Window Resize
+      // พื้นหลังซองฟอยล์เข้ม
+      const grad = ctx.createLinearGradient(0, 0, 0, 1024);
+      grad.addColorStop(0, '#022c22');
+      grad.addColorStop(0.4, '#064e3b');
+      grad.addColorStop(1, '#020617');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 1024, 1024);
+
+      // เส้นขอบสีทองและเขียวมรกต
+      ctx.strokeStyle = '#10b981';
+      ctx.lineWidth = 14;
+      ctx.strokeRect(35, 35, 954, 954);
+
+      ctx.strokeStyle = '#f59e0b';
+      ctx.lineWidth = 4;
+      ctx.strokeRect(52, 52, 920, 920);
+
+      // ไอคอนสัญลักษณ์
+      ctx.font = '90px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('🌱', 512, 180);
+
+      // ชื่อผลิตภัณฑ์
+      ctx.fillStyle = '#34d399';
+      ctx.font = 'bold 56px Kanit, sans-serif';
+      ctx.fillText('NATURAL UMAMI', 512, 270);
+
+      ctx.fillStyle = '#fbbf24';
+      ctx.font = 'bold 38px Kanit, sans-serif';
+      ctx.fillText('3D PROTOTYPE', 512, 330);
+
+      // เส้นแบ่ง
+      ctx.strokeStyle = '#374151';
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(150, 375);
+      ctx.lineTo(874, 375);
+      ctx.stroke();
+
+      // คำอธิบายสูตร
+      ctx.fillStyle = '#f8fafc';
+      ctx.font = '30px Kanit, sans-serif';
+      ctx.fillText('ผงนัวสมุนไพรพืชตกเกรดธรรมชาติ 100%', 512, 440);
+      
+      ctx.fillStyle = '#6ee7b7';
+      ctx.font = 'bold 24px Kanit, sans-serif';
+      ctx.fillText('(Upcycled Food Innovation)', 512, 485);
+
+      // ป้ายขนาดบรรจุ
+      ctx.fillStyle = '#059669';
+      ctx.beginPath();
+      ctx.roundRect(362, 540, 300, 75, 20);
+      ctx.fill();
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 34px Kanit, sans-serif';
+      ctx.fillText('100G POUCH', 512, 590);
+
+      // กล่องแสดงสัดส่วนวัตถุดิบ
+      ctx.fillStyle = '#0f172a';
+      ctx.strokeStyle = '#1e293b';
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.roundRect(100, 660, 824, 220, 24);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#fef08a';
+      ctx.font = 'bold 28px Kanit, sans-serif';
+      ctx.fillText('🌽 50%  🧅 20%  🧄 15%  🌿 10%  🌶️ 5%', 512, 735);
+
+      ctx.fillStyle = '#cbd5e1';
+      ctx.font = '22px Kanit, sans-serif';
+      ctx.fillText('ไม่เติมเกลือ • ไม่เติมน้ำตาล • ไม่ใส่สารกันก้อน', 512, 805);
+
+      const texture = new THREE.CanvasTexture(canvas);
+      texture.colorSpace = THREE.SRGBColorSpace;
+      return texture;
+    }
+
+    // 4. Build 3D Stand-up Pouch Mesh (สร้างรูปทรงซองบรรจุภัณฑ์ 3D)
+    const pouchGroup = new THREE.Group();
+
+    // สร้างส่วนโค้งของตัวซอง (Extruded Contour)
+    const shape = new THREE.Shape();
+    shape.moveTo(-0.7, -1.0);
+    shape.quadraticCurveTo(-0.8, 0, -0.65, 0.9);
+    shape.lineTo(0.65, 0.9);
+    shape.quadraticCurveTo(0.8, 0, 0.7, -1.0);
+    shape.closePath();
+
+    const extrudeSettings = {
+      depth: 0.35,
+      bevelEnabled: true,
+      bevelSegments: 8,
+      steps: 1,
+      bevelSize: 0.08,
+      bevelThickness: 0.08
+    };
+
+    const pouchGeo = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+    pouchGeo.center();
+
+    const labelTexture = createPouchTexture();
+
+    // วัสดุซองด้านข้าง/ด้านหลัง (สไตล์ผิวด้าน Satin)
+    const pouchMaterial = new THREE.MeshStandardMaterial({
+      color: 0x064e3b,
+      metalness: 0.2,
+      roughness: 0.35
+    });
+
+    // วัสดุด้านหน้า (แสดงฉลากสินค้า)
+    const labelMaterial = new THREE.MeshStandardMaterial({
+      map: labelTexture,
+      metalness: 0.1,
+      roughness: 0.3
+    });
+
+    const pouchBody = new THREE.Mesh(pouchGeo, [pouchMaterial, labelMaterial]);
+    pouchBody.castShadow = true;
+    pouchGroup.add(pouchBody);
+
+    // ส่วนขอบซีลด้านบนซอง (Top Ziplock Seal)
+    const sealGeo = new THREE.BoxGeometry(1.36, 0.12, 0.06);
+    const sealMat = new THREE.MeshStandardMaterial({
+      color: 0x047857,
+      metalness: 0.4,
+      roughness: 0.2
+    });
+    const sealMesh = new THREE.Mesh(sealGeo, sealMat);
+    sealMesh.position.set(0, 0.96, 0.175);
+    pouchGroup.add(sealMesh);
+
+    scene.add(pouchGroup);
+
+    // ฐานรองพื้นเงา (Shadow Receiver)
+    const floorGeo = new THREE.PlaneGeometry(10, 10);
+    const floorMat = new THREE.ShadowMaterial({ opacity: 0.4 });
+    const floor = new THREE.Mesh(floorGeo, floorMat);
+    floor.rotation.x = -Math.PI / 2;
+    floor.position.y = -1.1;
+    floor.receiveShadow = true;
+    scene.add(floor);
+
+    // 5. Responsive Resize Handler
     window.addEventListener('resize', () => {
       const width = container.clientWidth;
       const height = container.clientHeight;
@@ -241,11 +379,10 @@
       renderer.setSize(width, height);
     });
 
-    // Animation Loop
+    // 6. Animation Loop
     function animate() {
       requestAnimationFrame(animate);
-      pouch.rotation.y += 0.006;
-      ring.rotation.z -= 0.002;
+      pouchGroup.rotation.y += 0.005; // หมุนโมเดล 3D ช้าๆ
       controls.update();
       renderer.render(scene, camera);
     }

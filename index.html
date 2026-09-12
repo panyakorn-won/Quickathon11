@@ -76,7 +76,7 @@
                 </div>
                 <div>
                     <h1 class="text-lg md:text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-amber-300 via-orange-300 to-emerald-400">
-                        UMAI 3D PROTOTYPE
+                        NATURAL UMAI 3D PROTOTYPE
                     </h1>
                     <p class="text-xs text-gray-300">ผงนัวสมุนไพรพืชตกเกรดธรรมชาติ 100% (Upcycled Food Innovation)</p>
                 </div>
@@ -485,10 +485,7 @@
             ctx.textAlign = 'left';
             ctx.fillStyle = '#111827';
             ctx.font = 'bold 19px Prompt, sans-serif';
-            ctx.fillText('คุณค่าทางโภชนาการต่อ 1 ซอง (75 กรัม)', tableX + 20, 290);
-            ctx.font = '15px Prompt, sans-serif';
-            ctx.fillStyle = '#6B7280';
-            ctx.fillText('เทียบกับสูตรมันฝรั่งทอดกรอบทั่วไป', tableX + 20, 315);
+            ctx.fillText('คุณค่าทางโภชนาการต่อ 1 ซอง (75 กรัม)', tableX + 20, 300);
 
             ctx.beginPath();
             ctx.moveTo(tableX + 15, 328);
@@ -497,33 +494,29 @@
             ctx.strokeStyle = '#1F2937';
             ctx.stroke();
 
-            // nutData rows: [label, amount, comparison text, icon color]
+            // nutData rows: [label, amount]
             const nutData = [
-                ['พลังงานทั้งหมด', '~100 – 108 kcal', '▼ ลดแคลอรีมากกว่า 55%', '#DC2626'],
-                ['คาร์โบไฮเดรตทั้งหมด', '~36.3 g', '▼ ลดคาร์โบไฮเดรต 36%', '#DC2626'],
-                ['— ใยอาหาร (Fiber)', '~10.8 g', '▲ ใยอาหารธรรมชาติสูงขึ้นมาก', '#059669'],
-                ['— คาร์บสุทธิ (Net Carbs)', '~25.5 g', '▼ แป้ง-น้ำตาลลดลงเกินครึ่ง', '#DC2626'],
-                ['โปรตีน', '~12.6 g', '▲ โปรตีนเพิ่มขึ้นถึง 3 เท่า', '#059669'],
-                ['ไขมันทั้งหมด', '~1.2 g', '● ต่ำมาก แทบไม่มีนัยสำคัญ', '#059669'],
-                ['โซเดียม (Sodium)', '~1,495 mg', '● คงคุณสมบัติต่ำเหมือนเดิม', '#059669']
+                ['พลังงานทั้งหมด', '100 – 108 kcal'],
+                ['คาร์โบไฮเดรตทั้งหมด', '36.3 g'],
+                ['— ใยอาหาร (Fiber)', '10.8 g'],
+                ['— คาร์บสุทธิ (Net Carbs)', '25.5 g'],
+                ['โปรตีน', '12.6 g'],
+                ['ไขมันทั้งหมด', '1.2 g'],
+                ['โซเดียม (Sodium)', '1,495 mg']
             ];
 
             nutData.forEach((row, i) => {
-                const y = 358 + (i * 40);
+                const y = 360 + (i * 42);
                 const isSub = row[0].startsWith('—');
                 ctx.fillStyle = '#374151';
-                ctx.font = isSub ? '16px Prompt, sans-serif' : 'bold 17px Prompt, sans-serif';
+                ctx.font = isSub ? '17px Prompt, sans-serif' : 'bold 18px Prompt, sans-serif';
                 ctx.fillText(row[0], tableX + (isSub ? 30 : 20), y);
 
                 ctx.fillStyle = '#111827';
-                ctx.font = 'bold 17px Prompt, sans-serif';
+                ctx.font = 'bold 18px Prompt, sans-serif';
                 ctx.textAlign = 'right';
                 ctx.fillText(row[1], tableX + 415, y);
                 ctx.textAlign = 'left';
-
-                ctx.fillStyle = row[3];
-                ctx.font = '13px Prompt, sans-serif';
-                ctx.fillText(row[2], tableX + (isSub ? 30 : 20), y + 18);
             });
 
             // Usage & Directions Banner

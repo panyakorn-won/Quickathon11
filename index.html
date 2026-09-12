@@ -75,7 +75,7 @@
                     <i class="fa-solid fa-leaf mr-1"></i> เกลือสมุทรแท้ ไม่ใส่ผงชูรส
                 </span>
                 <span class="bg-amber-500/20 text-amber-300 text-xs px-3 py-1 rounded-full border border-amber-500/30">
-                    <i class="fa-solid fa-bolt mr-1"></i> COGS: 12.84 ฿/ซอง
+                    <i class="fa-solid fa-bolt mr-1"></i> วัตถุดิบ+บรรจุภัณฑ์: 7.93 ฿/ซอง
                 </span>
             </div>
         </header>
@@ -174,7 +174,7 @@
                     <h3 class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
                         <i class="fa-solid fa-chart-line"></i> ต้นทุน & ราคาขาย (Unit Economics)
                     </h3>
-                    <p class="text-[10px] text-gray-500 -mt-1">แตะแต่ละรายการเพื่อดูรายละเอียดเพิ่มเติม</p>
+                    <p class="text-[10px] text-gray-500 -mt-1">แตะแต่ละรายการเพื่อดูรายละเอียดเพิ่มเติม • ยอดผลิตคาดการณ์ 500,000 ซอง/ปี</p>
                     <div class="space-y-2 text-xs" id="cost-accordion"></div>
                 </div>
 
@@ -192,55 +192,67 @@
         // -------------------------------------------------------------
         // 0. COST & PRICE ACCORDION DATA
         // -------------------------------------------------------------
+        // Assumptions:
+        //   - Raw material cost per pouch: 5.43 THB
+        //   - Packaging (foil pouch) cost per pouch: 2.50 THB
+        //   - Raw material + packaging per pouch: 7.93 THB
+        //   - Projected annual volume: 500,000 pouches/year (~41,666.67/month)
+        //   - Factory operating cost: 155,833.33 THB/month (labor 90,000 + electricity 60,000 + maintenance 5,833.33)
+        //   - Factory cost allocated per pouch: 155,833.33 / 41,666.67 = 3.74 THB
+        //   - Fully-loaded cost per pouch: 7.93 + 3.74 = 11.67 THB
+        //   - Selling price: 22 THB -> PROFIT of 10.33 THB per pouch (~47%) at this volume
         const costItems = [
             {
                 id: 'raw',
-                label: 'ต้นทุนวัตถุดิบ (Raw Material)',
-                value: '63.40 ฿ /1kg',
+                label: 'ต้นทุนวัตถุดิบ + บรรจุภัณฑ์ต่อซอง (Raw + Packaging)',
+                value: '7.93 ฿ /ซอง',
                 color: 'gray',
                 details: [
-                    ['กะหล่ำปลีอบแห้งบด (75%)', '18.20 ฿/kg'],
-                    ['เห็ดหอมอบแห้งบด (15%)', '32.50 ฿/kg'],
-                    ['หน่อไม้ฝรั่งอบแห้งบด (5%)', '9.80 ฿/kg'],
-                    ['เกลือสมุทร (5%)', '2.90 ฿/kg'],
-                    ['รวมต้นทุนวัตถุดิบ', '63.40 ฿/kg']
+                    ['ผงกะหล่ำปลี (75%)', '1.14 ฿'],
+                    ['ผงเห็ดหอม (15%)', '2.60 ฿'],
+                    ['ผงหน่อไม้ฝรั่ง (5%)', '0.94 ฿'],
+                    ['เกลือสมุทร (5%)', '0.75 ฿'],
+                    ['รวมต้นทุนวัตถุดิบ', '5.43 ฿'],
+                    ['บรรจุภัณฑ์ (ซองฟอยล์)', '2.50 ฿'],
+                    ['รวมวัตถุดิบ + บรรจุภัณฑ์ต่อซอง', '7.93 ฿']
                 ]
             },
             {
                 id: 'production',
-                label: 'ต้นทุนการผลิตรวม (Production COGS)',
-                value: '128.40 ฿ /1kg',
+                label: 'ต้นทุนโรงงาน (Factory Cost)',
+                value: '฿155,833 /เดือน',
                 color: 'gray',
                 details: [
-                    ['วัตถุดิบตั้งต้น', '63.40 ฿/kg'],
-                    ['พลังงาน & การอบแห้ง', '22.00 ฿/kg'],
-                    ['แรงงานการผลิต', '18.50 ฿/kg'],
-                    ['บรรจุภัณฑ์ (ซองฟอยล์)', '16.00 ฿/kg'],
-                    ['ค่าเสื่อม & โสหุ้ยโรงงาน', '8.50 ฿/kg'],
-                    ['รวมต้นทุนการผลิต', '128.40 ฿/kg']
+                    ['ค่าก่อสร้างโรงงาน (ตากแห้ง+บด+บรรจุ)', '262,750 ฿ (ลงทุนครั้งแรก)'],
+                    ['ค่าไฟฟ้า', '60,000 ฿ /เดือน'],
+                    ['ค่าคนงาน', '90,000 ฿ /เดือน'],
+                    ['ค่าซ่อมบำรุง', '5,833.33 ฿ /เดือน'],
+                    ['รวมต้นทุนดำเนินการต่อเดือน', '155,833.33 ฿ /เดือน'],
+                    ['ยอดผลิตคาดการณ์', '500,000 ซอง /ปี (~41,666.67 ซอง /เดือน)'],
+                    ['ต้นทุนโรงงานต่อซอง', '3.74 ฿ /ซอง']
                 ]
             },
             {
                 id: 'perpouch',
-                label: 'ต้นทุนต่อซอง (75g Pouch)',
-                value: '9.63 ฿ /ซอง',
+                label: 'ต้นทุนต่อซองสุทธิ (Fully Loaded Cost, 75g Pouch)',
+                value: '11.67 ฿ /ซอง',
                 color: 'amber',
                 details: [
-                    ['ต้นทุนการผลิต (128.40 ฿/kg × 0.075kg)', '9.63 ฿'],
-                    ['บรรจุภัณฑ์และฉลาก (รวมในต้นทุนผลิตแล้ว)', '—'],
-                    ['ต้นทุนต่อซองสุทธิ', '9.63 ฿']
+                    ['ต้นทุนวัตถุดิบ + บรรจุภัณฑ์', '7.93 ฿'],
+                    ['ส่วนแบ่งต้นทุนโรงงานต่อซอง (ที่ยอดผลิต 500,000 ซอง/ปี)', '3.74 ฿'],
+                    ['ต้นทุนต่อซองสุทธิ (Fully Loaded Cost)', '11.67 ฿']
                 ]
             },
             {
                 id: 'srp',
-                label: 'ราคาขายแนะนำ (SRP)',
-                value: '55 – 69 ฿',
+                label: 'ราคาขาย (Selling Price)',
+                value: '22 ฿ /ซอง',
                 color: 'emerald',
                 details: [
-                    ['ต้นทุนต่อซอง', '9.63 ฿'],
-                    ['Gross Margin ที่ราคา 55 ฿', '82.5%'],
-                    ['Gross Margin ที่ราคา 69 ฿', '86.0%'],
-                    ['ช่วงราคาขายแนะนำ', '55 – 69 ฿ / ซอง']
+                    ['ราคาขาย', '22.00 ฿'],
+                    ['ต้นทุนต่อซองสุทธิ (Fully Loaded)', '11.67 ฿'],
+                    ['กำไรต่อซอง', '10.33 ฿ (~47.0%)'],
+                    ['กำไรรวมโดยประมาณ', '~430,417 ฿ /เดือน (ที่ 500,000 ซอง/ปี)']
                 ]
             }
         ];
@@ -250,7 +262,8 @@
             const colorMap = {
                 gray: { bg: 'bg-gray-800/50', text: 'text-gray-400', valText: 'text-gray-200' },
                 amber: { bg: 'bg-amber-500/10 border border-amber-500/30', text: 'text-amber-200', valText: 'text-amber-300' },
-                emerald: { bg: 'bg-emerald-500/10 border border-emerald-500/30', text: 'text-emerald-200', valText: 'text-emerald-300' }
+                emerald: { bg: 'bg-emerald-500/10 border border-emerald-500/30', text: 'text-emerald-200', valText: 'text-emerald-300' },
+                red: { bg: 'bg-red-500/10 border border-red-500/30', text: 'text-red-200', valText: 'text-red-300' }
             };
             container.innerHTML = costItems.map(item => {
                 const c = colorMap[item.color];
@@ -273,8 +286,8 @@
                     </div>
                 </div>`;
             }).join('') + `
-                <div class="p-2 bg-gray-900/80 rounded-lg text-center text-emerald-400 font-bold text-xs">
-                    🔥 Gross Margin: 82.5% – 86.0%
+                <div class="p-2 bg-emerald-950/50 border border-emerald-500/30 rounded-lg text-center text-emerald-300 font-bold text-xs">
+                    ✅ ที่ยอดผลิต 500,000 ซอง/ปี ราคาขาย 22 ฿ ครอบคลุมต้นทุนต่อซอง 11.67 ฿ ได้สบาย — กำไร 10.33 ฿/ซอง (~47%)
                 </div>`;
 
             container.querySelectorAll('.cost-toggle').forEach(btn => {

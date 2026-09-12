@@ -866,7 +866,7 @@
 
             // Camera (aspect based on the top-half viewer container, not full window)
             camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
-            camera.position.set(0, 0, 11);
+            fitCameraToPouch();
 
             // Renderer
             renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -1013,10 +1013,24 @@
             renderer.render(scene, camera);
         }
 
+        function fitCameraToPouch() {
+            // Half-extents of the pouch (world units) plus a comfortable margin
+            // so the whole pouch stays inside the frame at any container aspect.
+            const objHalfWidth = 2.25;
+            const objHalfHeight = 3.4;
+
+            const vFov = camera.fov * Math.PI / 180;
+            const distForHeight = objHalfHeight / Math.tan(vFov / 2);
+            const distForWidth = objHalfWidth / (Math.tan(vFov / 2) * camera.aspect);
+
+            camera.position.set(0, 0, Math.max(distForHeight, distForWidth) * 1.12);
+            camera.updateProjectionMatrix();
+        }
+
         function onWindowResize() {
             const container = document.getElementById('canvas-container');
             camera.aspect = container.clientWidth / container.clientHeight;
-            camera.updateProjectionMatrix();
+            fitCameraToPouch();
             renderer.setSize(container.clientWidth, container.clientHeight);
         }
 

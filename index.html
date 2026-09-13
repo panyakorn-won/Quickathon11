@@ -401,12 +401,12 @@
             ctx.fill();
 
             ctx.fillStyle = '#FBBF24';
-            ctx.font = 'bold 28px Prompt, sans-serif';
-            const msgGap = 36;
+            ctx.font = 'bold 26px Prompt, sans-serif';
+            const halfGap = 26;
             ctx.textAlign = 'right';
-            ctx.fillText('❌ ไม่ใส่ผงชูรส (MSG)', w/2 - msgGap/2, h*0.84 + 54);
+            ctx.fillText('❌ ไม่ใส่ผงชูรส (MSG)', w/2 - halfGap, h*0.84 + 54);
             ctx.textAlign = 'left';
-            ctx.fillText('❌ ไม่เติมน้ำตาล', w/2 + msgGap/2, h*0.84 + 54);
+            ctx.fillText('❌ ไม่เติมน้ำตาล', w/2 + halfGap, h*0.84 + 54);
             ctx.textAlign = 'center';
 
             // Net Weight

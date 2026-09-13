@@ -76,7 +76,7 @@
                 </div>
                 <div>
                     <h1 class="text-lg md:text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-amber-300 via-orange-300 to-emerald-400">
-                        NATURAL UMAMI 3D PROTOTYPE
+                        NATURAL UMAI 3D PROTOTYPE
                     </h1>
                     <p class="text-xs text-gray-300">ผงนัวสมุนไพรพืชตกเกรดธรรมชาติ 100% (Upcycled Food Innovation)</p>
                 </div>
@@ -401,13 +401,8 @@
             ctx.fill();
 
             ctx.fillStyle = '#FBBF24';
-            ctx.font = 'bold 26px Prompt, sans-serif';
-            const halfGap = 26;
-            ctx.textAlign = 'right';
-            ctx.fillText('❌ ไม่ใส่ผงชูรส (MSG)', w/2 - halfGap, h*0.84 + 54);
-            ctx.textAlign = 'left';
-            ctx.fillText('❌ ไม่เติมน้ำตาล', w/2 + halfGap, h*0.84 + 54);
-            ctx.textAlign = 'center';
+            ctx.font = 'bold 28px Prompt, sans-serif';
+            ctx.fillText('❌ ไม่ใส่ผงชูรส (MSG)  ❌ ไม่เติมน้ำตาล', w/2, h*0.84 + 54);
 
             // Net Weight
             ctx.fillStyle = '#1F2937';
@@ -433,18 +428,9 @@
             ctx.fillStyle = '#059669';
             ctx.fillRect(0, 100, w, 75);
             ctx.fillStyle = '#FFFFFF';
+            ctx.font = 'bold 32px Prompt, sans-serif';
             ctx.textAlign = 'center';
-            {
-                const headerText = 'ข้อมูลผลิตภัณฑ์ & คุณค่าทางโภชนาการ';
-                let headerFontSize = 32;
-                const maxHeaderWidth = w * 0.86;
-                ctx.font = `bold ${headerFontSize}px Prompt, sans-serif`;
-                while (ctx.measureText(headerText).width > maxHeaderWidth && headerFontSize > 18) {
-                    headerFontSize -= 1;
-                    ctx.font = `bold ${headerFontSize}px Prompt, sans-serif`;
-                }
-                ctx.fillText(headerText, w/2, 150);
-            }
+            ctx.fillText('ข้อมูลผลิตภัณฑ์ & คุณค่าทางโภชนาการ', w/2, 150);
 
             ctx.textAlign = 'left';
 
@@ -570,10 +556,10 @@
 
             // Manufacturer Details
             ctx.textAlign = 'center';
-            ctx.font = '19px Prompt, sans-serif';
+            ctx.font = '20px Prompt, sans-serif';
             ctx.fillStyle = '#4B5563';
-            ctx.fillText('วิจัยและพัฒนาโดย: โครงการแปรรูปพืชตกเกรดเพื่อสร้างมูลค่าเพิ่ม (Upcycled Food Tech)', w/2, 1290);
-            ctx.fillText('ผลิตโดย: Green Umami Co., Ltd. | วันหมดอายุ: ดูใต้บรรจุภัณฑ์', w/2, 1326);
+            ctx.fillText('วิจัยและพัฒนาโดย: โครงการแปรรูปพืชตกเกรดเพื่อสร้างมูลค่าเพิ่ม (Upcycled Food Tech)', w/2, 1330);
+            ctx.fillText('ผลิตโดย: Green Umami Co., Ltd. | วันหมดอายุ: ดูใต้บรรจุภัณฑ์', w/2, 1370);
 
             return new THREE.CanvasTexture(canvas);
         }
@@ -899,7 +885,7 @@
             controls.minDistance = 5;
 
             // Lights
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.95);
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.75);
             scene.add(ambientLight);
 
             const keyLight = new THREE.DirectionalLight(0xfff5e6, 1.5);
@@ -912,10 +898,6 @@
             const fillLight = new THREE.DirectionalLight(0xd1fae5, 0.7);
             fillLight.position.set(-8, 3, -5);
             scene.add(fillLight);
-
-            const fillLightRight = new THREE.DirectionalLight(0xfff0d9, 0.75);
-            fillLightRight.position.set(8, 2, 5);
-            scene.add(fillLightRight);
 
             const rimLight = new THREE.DirectionalLight(0xffffff, 1.1);
             rimLight.position.set(0, -6, 6);
@@ -966,7 +948,7 @@
                 // Cushion Curve (Pillowy pouch body)
                 if (v > 0.08 && v < 0.92) {
                     let vNorm = (v - 0.08) / 0.84;
-                    z = 0.28 * Math.sin(Math.PI * vNorm) * Math.sin(Math.PI * u);
+                    z = 0.42 * Math.sin(Math.PI * vNorm) * Math.sin(Math.PI * u);
                 }
 
                 // Crimp ridges
@@ -985,15 +967,15 @@
             // Materials
             foilMaterialFront = new THREE.MeshStandardMaterial({
                 map: frontTex,
-                roughness: 0.58,
-                metalness: 0.14,
+                roughness: 0.40,
+                metalness: 0.30,
                 side: THREE.FrontSide
             });
 
             foilMaterialBack = new THREE.MeshStandardMaterial({
                 map: backTex,
-                roughness: 0.58,
-                metalness: 0.14,
+                roughness: 0.40,
+                metalness: 0.30,
                 side: THREE.FrontSide
             });
 

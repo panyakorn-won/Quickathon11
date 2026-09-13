@@ -1034,7 +1034,40 @@
             renderer.setSize(container.clientWidth, container.clientHeight);
         }
 
-        window.addEventListener('load', init3D);
+        // -------------------------------------------------------------
+        // FIX: wait for the Prompt webfont to actually be loaded before
+        // drawing any canvas text. Without this, iOS Safari can start
+        // rendering the texture with a fallback font (Arial/Helvetica),
+        // whose character widths differ from Prompt — throwing off
+        // ctx.textAlign = 'center' positioning and making text look
+        // off-center / asymmetric on iPhone.
+        // -------------------------------------------------------------
+        window.addEventListener('load', () => {
+            const fontsToPreload = [
+                '900 86px Prompt',
+                'bold 50px Prompt',
+                'bold 34px Prompt',
+                'bold 32px Prompt',
+                'bold 28px Prompt',
+                'bold 24px Prompt',
+                'bold 22px Prompt',
+                'bold 20px Prompt',
+                'bold 19px Prompt',
+                'bold 18px Prompt',
+                '26px Prompt',
+                '22px Prompt',
+                '21px Prompt',
+                '20px Prompt',
+                '18px Prompt',
+                '16px Prompt'
+            ];
+
+            const fontLoadPromises = fontsToPreload.map(f => document.fonts.load(f));
+
+            Promise.all([document.fonts.ready, ...fontLoadPromises])
+                .then(init3D)
+                .catch(init3D); // even if a font fails to load, don't block the 3D scene forever
+        });
     </script>
 </body>
 </html>
